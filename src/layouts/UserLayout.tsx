@@ -49,14 +49,11 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
+                <span className={styles.title}>好客商城</span>
               </Link>
             </div>
             <div className={styles.desc}>
-              <FormattedMessage
-                id="pages.layouts.userLayout.title"
-                defaultMessage="Ant Design. The most influential Web design specification in Xihu District."
-              />
+              <FormattedMessage id="pages.layouts.userLayout.title" defaultMessage="好客商城" />
             </div>
           </div>
           {children}

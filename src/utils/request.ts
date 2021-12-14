@@ -1,6 +1,6 @@
 /** Request 网络请求工具 更详细的 api 文档: https://github.com/umijs/umi-request */
-import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { extend, RequestOptionsInit } from 'umi-request';
+import { message } from 'antd';
 
 const codeMessage: Record<number, string> = {
   200: '服务器成功返回请求的数据。',
@@ -24,18 +24,30 @@ const codeMessage: Record<number, string> = {
  * @zh-CN 异常处理程序
  * @en-US Exception handler
  */
-const errorHandler = (error: { response: Response }): Response => {
+const errorHandler = async (error: { response: Response }): Promise<Response> => {
   const { response } = error;
   if (response && response.status) {
-    const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
+    let errorText = codeMessage[response.status] || response.statusText;
+    const { status } = response;
 
-    notification.error({
-      message: `Request error ${status}: ${url}`,
-      description: errorText,
-    });
+    const result = await response.json();
+
+    console.log(result);
+    //处理422未验证通过的情况
+    if (status === 422) {
+      let errs = '';
+      for (const key in result.errors) {
+        errs += result.errors[key][0];
+      }
+      errorText += errs;
+    }
+    //处理400的情况
+    if (status === 400) {
+      errorText += `[${result.message}]`;
+    }
+    message.error(errorText);
   } else if (!response) {
-    notification.error({
+    message.error({
       description: 'Your network is abnormal and cannot connect to the server',
       message: 'Network anomaly',
     });
@@ -50,6 +62,23 @@ const errorHandler = (error: { response: Response }): Response => {
 const request = extend({
   errorHandler, // default error handling
   credentials: 'include', // Does the default request bring cookies
+  prefix: '/api',
+});
+
+//设置请求拦截器
+request.interceptors.request.use((url: string, options: RequestOptionsInit) => {
+  //获取token
+  const token = 'hello';
+
+  //设置header头
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  return {
+    url,
+    options: { ...options, headers },
+  };
 });
 
 export default request;

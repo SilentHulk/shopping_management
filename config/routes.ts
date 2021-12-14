@@ -12,13 +12,13 @@ export default [
     component: '../layouts/BlankLayout',
     routes: [
       {
-        path: '/user',
+        path: '/login',
         component: '../layouts/UserLayout',
         routes: [
           {
             name: 'login',
-            path: '/user/login',
-            component: './User/login',
+            path: '/login',
+            component: './Login',
           },
         ],
       },
@@ -32,38 +32,10 @@ export default [
             authority: ['admin', 'user'],
             routes: [
               {
-                name: 'dashboardworkplace',
-                icon: 'table',
-                path: '/dashboardworkplace',
-                component: './DashboardWorkplace',
-              },
-              {
-                path: '/',
-                redirect: '/welcome',
-              },
-              {
                 path: '/todo',
                 name: 'todo',
                 icon: 'UnorderedListOutlined',
                 component: './Todo',
-              },
-              {
-                path: '/person',
-                name: 'person',
-                icon: 'UserOutlined',
-                component: './Person',
-              },
-              {
-                path: '/news',
-                name: 'news',
-                icon: 'smile',
-                component: './News',
-              },
-              {
-                path: '/welcome',
-                name: 'welcome',
-                icon: 'smile',
-                component: './Welcome',
               },
               {
                 path: '/admin',
@@ -71,30 +43,8 @@ export default [
                 icon: 'crown',
                 component: './Admin',
                 authority: ['admin'],
-                routes: [
-                  {
-                    path: '/admin/sub-page',
-                    name: 'sub-page',
-                    icon: 'smile',
-                    component: './Welcome',
-                    authority: ['admin'],
-                  },
-                ],
-              },
-              {
-                name: 'list.table-list',
-                icon: 'table',
-                path: '/list',
-                component: './TableList',
-              },
-
-              {
-                component: './404',
               },
             ],
-          },
-          {
-            component: './404',
           },
         ],
       },
