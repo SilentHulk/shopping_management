@@ -7,10 +7,10 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
-import { Alert, Space, message, Tabs } from 'antd';
-import React, { useState } from 'react';
+import { Space, message, Tabs } from 'antd';
+import React, { useState, useEffect } from 'react';
 import ProForm, { ProFormCaptcha, ProFormText } from '@ant-design/pro-form';
-import { useIntl, connect, FormattedMessage } from 'umi';
+import { useIntl, connect, FormattedMessage, history } from 'umi';
 import { getFakeCaptcha } from '@/services/login';
 import type { Dispatch } from 'umi';
 import type { StateType } from '@/models/login';
@@ -25,24 +25,19 @@ export type LoginProps = {
   submitting?: boolean;
 };
 
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({ content }) => (
-  <Alert
-    style={{
-      marginBottom: 24,
-    }}
-    message={content}
-    type="error"
-    showIcon
-  />
-);
-
 const Login: React.FC<LoginProps> = (props) => {
   const { userLogin = {}, submitting } = props;
   const { status, type: loginType } = userLogin;
   const [type, setType] = useState<string>('account');
   const intl = useIntl();
+
+  useEffect(() => {
+    //如果已经登录过就直接去首页
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
+      history.replace('/');
+    }
+  });
 
   const handleSubmit = (values: LoginParamsType) => {
     const { dispatch } = props;
@@ -89,35 +84,23 @@ const Login: React.FC<LoginProps> = (props) => {
           />
         </Tabs>
 
-        {status === 'error' && loginType === 'account' && !submitting && (
-          <LoginMessage
-            content={intl.formatMessage({
-              id: 'pages.login.accountLogin.errorMessage',
-              defaultMessage: 'Incorrect account or password（admin/ant.design)',
-            })}
-          />
-        )}
         {type === 'account' && (
           <>
             <ProFormText
-              name="userName"
+              name="email"
               fieldProps={{
                 size: 'large',
                 prefix: <UserOutlined className={styles.prefixIcon} />,
               }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.username.placeholder',
-                defaultMessage: 'Username: admin or user',
-              })}
+              placeholder="邮箱:super@a.com"
               rules={[
                 {
                   required: true,
-                  message: (
-                    <FormattedMessage
-                      id="pages.login.username.required"
-                      defaultMessage="Please enter user name!"
-                    />
-                  ),
+                  message: '请输入正确的邮箱',
+                },
+                {
+                  type: 'email',
+                  message: '请输入正确的邮箱',
                 },
               ]}
             />
@@ -127,19 +110,11 @@ const Login: React.FC<LoginProps> = (props) => {
                 size: 'large',
                 prefix: <LockOutlined className={styles.prefixIcon} />,
               }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.password.placeholder',
-                defaultMessage: 'Password: ant.design',
-              })}
+              placeholder="请输入密码"
               rules={[
                 {
                   required: true,
-                  message: (
-                    <FormattedMessage
-                      id="pages.login.password.required"
-                      defaultMessage="Please enter password！"
-                    />
-                  ),
+                  message: '请输入密码',
                 },
               ]}
             />
