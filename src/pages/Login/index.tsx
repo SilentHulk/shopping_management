@@ -11,7 +11,6 @@ import { Space, message, Tabs } from 'antd';
 import React, { useState, useEffect } from 'react';
 import ProForm, { ProFormCaptcha, ProFormText } from '@ant-design/pro-form';
 import { useIntl, connect, FormattedMessage, history } from 'umi';
-import { getFakeCaptcha } from '@/services/login';
 import type { Dispatch } from 'umi';
 import type { StateType } from '@/models/login';
 import type { LoginParamsType } from '@/services/login';
